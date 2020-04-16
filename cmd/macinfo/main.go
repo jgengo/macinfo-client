@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/jgengo/macinfo-client/internal/hardware"
+	"github.com/jgengo/macinfo-client/internal/gatherer"
 	"github.com/jgengo/macinfo-client/internal/utils"
 	"github.com/kolide/osquery-go"
 )
@@ -22,7 +22,7 @@ func main() {
 	osq.Client = c
 	defer c.Close()
 
-	hardware.GetInfo(osq)
+	gatherer.GetInfo(osq)
 
 	// resp, err := c.Query(os.Args[1])
 	// if err != nil {
