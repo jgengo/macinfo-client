@@ -12,43 +12,47 @@ import (
 	"github.com/jgengo/macinfo-client/internal/utils"
 )
 
-// Hardware stores the Mac hardware information
-type Hardware struct {
-	Hostname string `json:"hostname"`
-	UUID     string `json:"uuid"`
-	Usb      []Usb  `json:"usb_devices"`
+// System stores the Mac system information
+type System struct {
+	Hostname   string    `json:"hostname"`
+	UUID       string    `json:"uuid"`
+	Usb        []Usb     `json:"usb_devices"`
+	Uptime     uint      `json:"uptime"`
+	LastReboot []string  `json:"last_reboot"`
+	Sensors    []Sensor  `json:"sensors"`
+	OsVersion  OsVersion `json:"os_version"`
 }
 
-// Usb stores a usb devices
+// OsVersion stores the os version information
+type OsVersion struct {
+	version string
+	build   string
+}
+
+// Sensor stores a temperature sensor information
+type Sensor struct {
+	name    string
+	celsius float64
+}
+
+// Usb stores a usb device information
 type Usb struct {
 	vendor string
 	model  string
 }
 
-// System stores system info
-type System struct {
-	Uptime     uint     `json:"uptime"`
-	LastReboot []string `json:"last_reboot"`
-}
-
 // GetInfo retrieves all the information of the client
 func GetInfo(c *utils.OsQuery) {
-	var hardware Hardware
-	hardware.getSystemInfo(c)
-	hardware.getUsbDevices(c)
-
 	var system System
-	system.getSysInfo(c)
+	system.getSystemInfo(c)
+	system.getUsbDevices(c)
+	system.getUptime(c)
 	system.getLastReboot(c)
-	// fmt.Printf("%+v", hardware)
-	fmt.Printf("%+v", system)
-	for _, p := range system.LastReboot {
-		fmt.Println(p)
-	}
-
+	system.getTemperatureSensors(c)
+	system.getOsVersion(c)
 }
 
-func shellExec(cmd *exec.Cmd) string {
+func execToString(cmd *exec.Cmd) string {
 	var b bytes.Buffer
 	cmd.Stdout = &b
 	if err := cmd.Run(); err != nil {
@@ -57,11 +61,31 @@ func shellExec(cmd *exec.Cmd) string {
 	return b.String()
 }
 
+func (s *System) getOsVersion(c *utils.OsQuery) {
+	resp, err := c.Client.Query("select version, build from os_version;")
+	if err != nil {
+		log.Fatalf("%v", err)
+	}
+	s.OsVersion = OsVersion{version: resp.Response[0]["version"], build: resp.Response[0]["build"]}
+}
+
+func (s *System) getTemperatureSensors(c *utils.OsQuery) {
+	resp, err := c.Client.Query("select name, celsius from temperature_sensors;")
+	if err != nil {
+		log.Fatalf("%v", err)
+	}
+
+	for _, sensor := range resp.Response {
+		celsius, _ := strconv.ParseFloat(sensor["celsius"], 1)
+		s.Sensors = append(s.Sensors, Sensor{name: sensor["name"], celsius: celsius})
+	}
+}
+
 // TODO: refacto
 func (s *System) getLastReboot(c *utils.OsQuery) {
 	var ret []string
 
-	out := shellExec(exec.Command("last", "reboot"))
+	out := execToString(exec.Command("last", "reboot"))
 	lines := strings.Split(out, "\n")
 
 	r, _ := regexp.Compile("[a-zA-Z]{3}\\s{1}[a-zA-Z]{3}\\s{1,2}\\d{1,2}\\s{1}\\d{2}\\:\\d{2}")
@@ -75,38 +99,31 @@ func (s *System) getLastReboot(c *utils.OsQuery) {
 	s.LastReboot = ret
 }
 
-// TODO: (X1) voir le nom
-func (s *System) getSysInfo(c *utils.OsQuery) {
+func (s *System) getUptime(c *utils.OsQuery) {
 	resp, err := c.Client.Query("select total_seconds from uptime")
 	if err != nil {
 		log.Fatalf("Error while gathering SysInfo: %v\n", err)
 	}
-	conv, err := strconv.Atoi(resp.Response[0]["total_seconds"])
-	if err != nil {
-		log.Printf("error while converting uptime.total_seconds: %v", err)
-		s.Uptime = 0
-	} else {
-		s.Uptime = uint(conv)
-	}
+	conv, _ := strconv.Atoi(resp.Response[0]["total_seconds"])
+	s.Uptime = uint(conv)
 }
 
-// TODO: (X1) voir le nom
-func (h *Hardware) getSystemInfo(c *utils.OsQuery) {
+func (s *System) getSystemInfo(c *utils.OsQuery) {
 	resp, err := c.Client.Query("select uuid, hostname from system_info;")
 	if err != nil {
 		log.Fatalf("error while trying to get the system_info: %v\n", err)
 	}
-	h.Hostname = resp.Response[0]["hostname"]
-	h.UUID = resp.Response[0]["uuid"]
+	s.Hostname = resp.Response[0]["hostname"]
+	s.UUID = resp.Response[0]["uuid"]
 }
 
-func (h *Hardware) getUsbDevices(c *utils.OsQuery) {
+func (s *System) getUsbDevices(c *utils.OsQuery) {
 	resp, err := c.Client.Query("select vendor, model from usb_devices;")
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
 
 	for _, usb := range resp.Response {
-		h.Usb = append(h.Usb, Usb{vendor: usb["vendor"], model: usb["model"]})
+		s.Usb = append(s.Usb, Usb{vendor: usb["vendor"], model: usb["model"]})
 	}
 }

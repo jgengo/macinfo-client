@@ -23,5 +23,4 @@ export GOFLAGS="-mod=vendor"
 
 go install                                                      \
     -installsuffix "static"                                     \
-    -ldflags "-X $(go list -m)/pkg/version.VERSION=${VERSION}"  \
     ./...
