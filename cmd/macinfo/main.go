@@ -1,36 +1,19 @@
 package main
 
 import (
-	"log"
-	"time"
+	"flag"
 
+	"github.com/jgengo/macinfo-client/internal/config"
 	"github.com/jgengo/macinfo-client/internal/gatherer"
-	"github.com/jgengo/macinfo-client/internal/utils"
-	"github.com/kolide/osquery-go"
-)
-
-const (
-	osqSock = "/var/osquery/osquery.em"
+	"github.com/jgengo/macinfo-client/internal/sender"
 )
 
 func main() {
-	osq := &utils.OsQuery{}
-	c, err := osquery.NewClient(osqSock, 10*time.Second)
-	if err != nil {
-		log.Fatalf("osquery (error) while creating a new client: %v\n", err)
-	}
-	osq.Client = c
-	defer c.Close()
+	cfgPtr := flag.String("cfg", "/etc/macinfo.yml", "specify another config path")
+	flag.Parse()
 
-	gatherer.GetInfo(osq)
+	config.Initiate(*cfgPtr)
 
-	// resp, err := c.Query(os.Args[1])
-	// if err != nil {
-	// 	log.Fatalf("Error communicating with osqueryd: %v", err)
-	// }
-	// if resp.Status.Code != 0 {
-	// 	log.Fatalf("osqueryd returned error: %s", resp.Status.Message)
-	// }
-
-	// fmt.Printf("Got results:\n%#v\n", resp.Response)
+	system := gatherer.GetInfo()
+	sender.Process(system)
 }
