@@ -35,10 +35,11 @@ func Initiate(cfgPath string) {
 		log.Fatalf("cannot unmarshall the config file: %v\n", err)
 	}
 
-	c, err := osquery.NewClient(utils.Cfg.OsqSock, 10*time.Second)
+	utils.Cfg.CfgPath = cfgPath
+
+	c, err := osquery.NewClient(utils.Cfg.OsqSock, 15*time.Second)
 	if err != nil {
 		log.Fatalf("osquery (error) while creating a new client: %v\n", err)
 	}
 	utils.OsQ.Client = c
-	defer c.Close()
 }

@@ -15,6 +15,7 @@ import (
 type System struct {
 	Token      string    `json:"token"`
 	Hostname   string    `json:"hostname"`
+	ActiveUser string    `json:"active_user"`
 	UUID       string    `json:"uuid"`
 	Usb        []Usb     `json:"usb_devices"`
 	Uptime     uint      `json:"uptime"`
@@ -25,14 +26,14 @@ type System struct {
 
 // OsVersion stores the os version information
 type OsVersion struct {
-	Version string
-	Build   string
+	Version string `json:"version"`
+	Build   string `json:"build"`
 }
 
 // Sensor stores a temperature sensor information
 type Sensor struct {
-	Name    string
-	Celsius float64
+	Name    string  `json:"name"`
+	Celsius float64 `json:"celsius"`
 }
 
 // Usb stores a usb device information
@@ -44,6 +45,7 @@ type Usb struct {
 // GetInfo retrieves all the information of the client
 func GetInfo() *System {
 	var system System
+
 	system.Token = utils.Cfg.APIToken
 	system.getSystemInfo()
 	system.getUsbDevices()
@@ -51,6 +53,7 @@ func GetInfo() *System {
 	system.getLastReboot()
 	system.getTemperatureSensors()
 	system.getOsVersion()
+	system.getActiveUser()
 
 	return &system
 }
@@ -62,6 +65,29 @@ func execToString(cmd *exec.Cmd) string {
 		log.Fatalf("error while gathering last reboots: %v\n", err)
 	}
 	return b.String()
+}
+
+func (s *System) getActiveUser() {
+	user := execToString(exec.Command("stat", "-f", "'%Su'", "/dev/console"))
+	user = strings.TrimSpace(user)
+	user = strings.Trim(user, "'")
+	s.ActiveUser = user
+}
+
+func (s *System) getLastReboot() {
+	var ret []string
+
+	out := execToString(exec.Command("last", "reboot"))
+	lines := strings.Split(out, "\n")
+
+	r, _ := regexp.Compile("[a-zA-Z]{3}\\s{1}[a-zA-Z]{3}\\s{1,2}\\d{1,2}\\s{1}\\d{2}\\:\\d{2}")
+	for _, line := range lines {
+		findStr := r.FindString(line)
+		if findStr != "" {
+			ret = append(ret, findStr)
+		}
+	}
+	s.LastReboot = ret
 }
 
 func (s *System) getOsVersion() {
@@ -82,22 +108,6 @@ func (s *System) getTemperatureSensors() {
 		celsius, _ := strconv.ParseFloat(sensor["celsius"], 1)
 		s.Sensors = append(s.Sensors, Sensor{Name: sensor["name"], Celsius: celsius})
 	}
-}
-
-func (s *System) getLastReboot() {
-	var ret []string
-
-	out := execToString(exec.Command("last", "reboot"))
-	lines := strings.Split(out, "\n")
-
-	r, _ := regexp.Compile("[a-zA-Z]{3}\\s{1}[a-zA-Z]{3}\\s{1,2}\\d{1,2}\\s{1}\\d{2}\\:\\d{2}")
-	for _, line := range lines {
-		findStr := r.FindString(line)
-		if findStr != "" {
-			ret = append(ret, findStr)
-		}
-	}
-	s.LastReboot = ret
 }
 
 func (s *System) getUptime() {

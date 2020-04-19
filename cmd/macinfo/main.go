@@ -6,6 +6,7 @@ import (
 	"github.com/jgengo/macinfo-client/internal/config"
 	"github.com/jgengo/macinfo-client/internal/gatherer"
 	"github.com/jgengo/macinfo-client/internal/sender"
+	"github.com/jgengo/macinfo-client/internal/utils"
 )
 
 func main() {
@@ -16,4 +17,6 @@ func main() {
 
 	system := gatherer.GetInfo()
 	sender.Process(system)
+
+	utils.OsQ.Client.Close()
 }
