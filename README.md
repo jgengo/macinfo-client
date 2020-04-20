@@ -7,7 +7,7 @@
   <sub>From <a href="https://hive.fi">Hive Helsinki</a></sub>
 </div>
 <div align="center">
-    <sub>Highly inspired by other tools of the 42 network (macreport, maxreport, etc.)</sub>
+    <sub>Highly inspired by <a href="#">maxreport</a> (max), itself inspired by <a href="#">macreport</a> (clem)</sub>
 </div>
 
 ---
