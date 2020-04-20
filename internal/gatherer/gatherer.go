@@ -47,13 +47,14 @@ func GetInfo() *System {
 	var system System
 
 	system.Token = utils.Cfg.APIToken
+
+	system.getActiveUser()
+	system.getLastReboot()
 	system.getSystemInfo()
 	system.getUsbDevices()
 	system.getUptime()
-	system.getLastReboot()
 	system.getTemperatureSensors()
 	system.getOsVersion()
-	system.getActiveUser()
 
 	return &system
 }
@@ -68,12 +69,20 @@ func execToString(cmd *exec.Cmd) string {
 }
 
 func (s *System) getActiveUser() {
-	user := execToString(exec.Command("stat", "-f", "'%Su'", "/dev/console"))
-	user = strings.TrimSpace(user)
-	user = strings.Trim(user, "'")
-	s.ActiveUser = user
+	resp, err := utils.OsQ.Client.Query("select user from logged_in_users where tty='console' limit 1;")
+	if err != nil {
+		log.Fatalf("error while gathering active user: %v", err)
+	}
+	if len(resp.Response) > 0 {
+		s.ActiveUser = resp.Response[0]["user"]
+	} else {
+		s.ActiveUser = ""
+	}
+
 }
 
+// You may know that the command last reboot will get slower
+// if you don't sometimes clean your asl log files.
 func (s *System) getLastReboot() {
 	var ret []string
 

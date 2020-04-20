@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"time"
 
 	"github.com/jgengo/macinfo-client/internal/config"
 	"github.com/jgengo/macinfo-client/internal/gatherer"
@@ -9,14 +10,23 @@ import (
 	"github.com/jgengo/macinfo-client/internal/utils"
 )
 
+func doEvery(d time.Duration) {
+	for range time.Tick(d) {
+		system := gatherer.GetInfo()
+		sender.Process(system)
+	}
+}
+
 func main() {
 	cfgPtr := flag.String("cfg", "/etc/macinfo.yml", "specify another config path")
 	flag.Parse()
 
 	config.Initiate(*cfgPtr)
+	defer utils.OsQ.Client.Close()
 
-	system := gatherer.GetInfo()
-	sender.Process(system)
+	doEvery(utils.Cfg.SyncInterval * time.Second)
+	for {
 
-	utils.OsQ.Client.Close()
+	}
+
 }

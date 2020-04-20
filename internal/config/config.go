@@ -37,7 +37,7 @@ func Initiate(cfgPath string) {
 
 	utils.Cfg.CfgPath = cfgPath
 
-	c, err := osquery.NewClient(utils.Cfg.OsqSock, 15*time.Second)
+	c, err := osquery.NewClient(utils.Cfg.OsqSock, 10*time.Second)
 	if err != nil {
 		log.Fatalf("osquery (error) while creating a new client: %v\n", err)
 	}
