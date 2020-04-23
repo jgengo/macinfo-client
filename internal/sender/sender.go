@@ -16,13 +16,15 @@ import (
 func Process(s *gatherer.System) {
 	json, err := json.Marshal(s)
 	if err != nil {
-		fmt.Printf("Error while marshaling system struct: %v\n", err)
+		log.Printf("failed to marshal: %v\n", err)
+		return
 	}
 
 	url := fmt.Sprintf("%s/sync", utils.Cfg.APIURL)
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(json))
 	if err != nil {
-		log.Fatalf("error while sending the info: %v", err)
+		log.Printf("failed to Post: %v", err)
+		return
 	}
 	defer resp.Body.Close()
 

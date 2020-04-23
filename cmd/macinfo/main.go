@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"log"
 	"time"
 
 	"github.com/jgengo/macinfo-client/internal/config"
@@ -18,6 +19,7 @@ func doEvery(d time.Duration) {
 }
 
 func main() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	cfgPtr := flag.String("cfg", "/etc/macinfo.yml", "specify another config path")
 	flag.Parse()
 
