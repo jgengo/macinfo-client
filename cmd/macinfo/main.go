@@ -20,6 +20,7 @@ func doEvery(d time.Duration) {
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
 	cfgPtr := flag.String("cfg", "/etc/macinfo.yml", "specify another config path")
 	flag.Parse()
 
@@ -30,5 +31,4 @@ func main() {
 	for {
 
 	}
-
 }

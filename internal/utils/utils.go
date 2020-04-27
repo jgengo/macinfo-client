@@ -1,6 +1,10 @@
 package utils
 
 import (
+	"fmt"
+	"io/ioutil"
+	"log"
+	"regexp"
 	"time"
 
 	"github.com/kolide/osquery-go"
@@ -24,4 +28,24 @@ type Config struct {
 // OsQuery stores osquery information
 type OsQuery struct {
 	Client *osquery.ExtensionManagerClient
+}
+
+// ChangeToken changes the token and save it into the config file
+func ChangeToken(token interface{}) {
+	Cfg.APIToken = token.(string)
+	b, err := ioutil.ReadFile(Cfg.CfgPath)
+	if err != nil {
+		log.Printf("failed to read the config file: %v\n", err)
+		return
+	}
+
+	bString := string(b)
+	r, _ := regexp.Compile("token: (.*)\\n")
+	bString = r.ReplaceAllString(bString, fmt.Sprintf("token: %s\n", token.(string)))
+
+	err = ioutil.WriteFile(Cfg.CfgPath, []byte(bString), 0600)
+	if err != nil {
+		log.Printf("failed to save new config file: %v\n", err)
+		return
+	}
 }

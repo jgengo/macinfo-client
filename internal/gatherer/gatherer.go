@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/jgengo/macinfo-client/internal/utils"
 )
@@ -37,8 +38,8 @@ type Sensor struct {
 
 // Usb stores a usb device information
 type Usb struct {
-	Vendor string
-	Model  string
+	Vendor string `json:"vendor"`
+	Model  string `json:"model"`
 }
 
 // GetInfo retrieves all the information of the client
@@ -144,6 +145,9 @@ func (s *System) getUsbDevices() {
 	}
 
 	for _, usb := range resp.Response {
-		s.Usb = append(s.Usb, Usb{Vendor: usb["vendor"], Model: usb["model"]})
+		s.Usb = append(s.Usb, Usb{
+			Vendor: strings.TrimSpace(usb["vendor"]),
+			Model:  strings.TrimSpace(usb["model"]),
+		})
 	}
 }
