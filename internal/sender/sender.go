@@ -45,7 +45,7 @@ func Process(s *gatherer.System) {
 		var respCreated map[string]interface{}
 		json.Unmarshal([]byte(body), &respCreated)
 		s.Token = respCreated["token"].(string)
-		utils.ChangeToken(respCreated["token"])
+		utils.ChangeToken(respCreated["token"].(string))
 		_, err := sync(s)
 		if err != nil {
 			log.Printf("error while re-sync: %v", err)

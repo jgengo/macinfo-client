@@ -31,8 +31,9 @@ type OsQuery struct {
 }
 
 // ChangeToken changes the token and save it into the config file
-func ChangeToken(token interface{}) {
-	Cfg.APIToken = token.(string)
+func ChangeToken(token string) {
+	Cfg.APIToken = token
+
 	b, err := ioutil.ReadFile(Cfg.CfgPath)
 	if err != nil {
 		log.Printf("failed to read the config file: %v\n", err)
@@ -41,7 +42,7 @@ func ChangeToken(token interface{}) {
 
 	bString := string(b)
 	r, _ := regexp.Compile("token: (.*)\\n")
-	bString = r.ReplaceAllString(bString, fmt.Sprintf("token: %s\n", token.(string)))
+	bString = r.ReplaceAllString(bString, fmt.Sprintf("token: %s\n", token))
 
 	err = ioutil.WriteFile(Cfg.CfgPath, []byte(bString), 0600)
 	if err != nil {
