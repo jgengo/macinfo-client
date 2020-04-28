@@ -44,8 +44,7 @@ func ChangeToken(token string) {
 	r, _ := regexp.Compile("token: (.*)\\n")
 	bString = r.ReplaceAllString(bString, fmt.Sprintf("token: %s\n", token))
 
-	err = ioutil.WriteFile(Cfg.CfgPath, []byte(bString), 0600)
-	if err != nil {
+	if err = ioutil.WriteFile(Cfg.CfgPath, []byte(bString), 0600); err != nil {
 		log.Printf("failed to save new config file: %v\n", err)
 		return
 	}
