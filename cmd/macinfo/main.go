@@ -21,13 +21,13 @@ func doEvery(d time.Duration) {
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
-	cfgPtr := flag.String("cfg", "/etc/macinfo.yml", "specify another config path")
+	cfgPtr := flag.String("cfg", "/var/macinfo/macinfo.yml", "specify another config path")
 	flag.Parse()
 
 	config.Initiate(*cfgPtr)
 	defer utils.OsQ.Client.Close()
 
-	doEvery(utils.Cfg.SyncInterval * time.Second)
+	doEvery(utils.Cfg.SyncInterval * time.Minute)
 	for {
 
 	}

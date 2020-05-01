@@ -69,7 +69,7 @@ func execToString(cmd *exec.Cmd) (string, error) {
 }
 
 func (s *System) getActiveUser() {
-	resp, err := utils.OsQ.Client.Query("select user from logged_in_users where tty='console' limit 1;")
+	resp, err := utils.OsQ.Client.Query("select user from logged_in_users where type='user' and tty='console' limit 1;")
 	if err != nil {
 		log.Printf("failed to get ActiveUser: %v\n", err)
 		return
