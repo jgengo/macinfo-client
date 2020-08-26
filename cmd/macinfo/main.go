@@ -12,7 +12,7 @@ import (
 	"github.com/jgengo/macinfo-client/internal/utils"
 )
 
-const appVersion = "0.4"
+const appVersion = "0.5"
 
 func doEvery(d time.Duration) {
 	for range time.Tick(d) {
