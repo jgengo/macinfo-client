@@ -25,6 +25,14 @@ func readConfig(cfgPath string) ([]byte, error) {
 	return bytes, nil
 }
 
+func ConnectOSQ() {
+	c, err := osquery.NewClient(utils.Cfg.OsqSock, 10*time.Second)
+	if err != nil {
+		log.Fatalf("osquery (error) while creating a new client: %v\n", err)
+	}
+	utils.OsQ.Client = c
+}
+
 // Initiate populates the global variable Cfg and OsQ with the information in the yml
 func Initiate(cfgPath string) {
 	content, err := readConfig(cfgPath)
@@ -36,10 +44,4 @@ func Initiate(cfgPath string) {
 	}
 
 	utils.Cfg.CfgPath = cfgPath
-
-	c, err := osquery.NewClient(utils.Cfg.OsqSock, 10*time.Second)
-	if err != nil {
-		log.Fatalf("osquery (error) while creating a new client: %v\n", err)
-	}
-	utils.OsQ.Client = c
 }

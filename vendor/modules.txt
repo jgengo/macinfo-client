@@ -1,15 +1,20 @@
-# github.com/Microsoft/go-winio v0.4.9
+# github.com/Microsoft/go-winio v0.4.14
+## explicit
 github.com/Microsoft/go-winio
-# github.com/apache/thrift v0.12.0
+github.com/Microsoft/go-winio/pkg/guid
+# github.com/apache/thrift v0.13.1-0.20200603211036-eac4d0c79a5f
 github.com/apache/thrift/lib/go/thrift
-# github.com/kolide/osquery-go v0.0.0-20190904034940-a74aa860032d
+# github.com/kolide/osquery-go v0.0.0-20200604192029-b019be7063ac
 ## explicit
 github.com/kolide/osquery-go
 github.com/kolide/osquery-go/gen/osquery
 github.com/kolide/osquery-go/transport
-# github.com/pkg/errors v0.8.0
+# github.com/pkg/errors v0.9.1
+## explicit
 github.com/pkg/errors
-# golang.org/x/sys v0.0.0-20180815093151-14742f9018cd
+# golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae
+## explicit
+golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/windows
 # gopkg.in/yaml.v2 v2.2.8
 ## explicit
