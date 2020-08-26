@@ -13,6 +13,9 @@ import (
 
 func doEvery(d time.Duration) {
 	for range time.Tick(d) {
+		config.ConnectOSQ()
+		defer utils.OsQ.Client.Close()
+
 		system := gatherer.GetInfo()
 		sender.Process(system)
 	}
