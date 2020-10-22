@@ -31,15 +31,19 @@ func sync(s *gatherer.System) (*http.Response, error) {
 }
 
 // Process is the entrypoint function of the sender package
-func Process(s *gatherer.System) {
+func Process(s *gatherer.System) error {
 	resp, err := sync(s)
 	if err != nil {
 		log.Printf("failed to sync: %v", err)
-		return
+		return err
 	}
 	defer resp.Body.Close()
 
-	body, _ := ioutil.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("failed to read body: %v", err)
+		return err
+	}
 
 	if resp.StatusCode == 201 {
 		var respCreated map[string]interface{}
@@ -49,8 +53,10 @@ func Process(s *gatherer.System) {
 		_, err := sync(s)
 		if err != nil {
 			log.Printf("error while re-sync: %v", err)
+			return err
 		}
 	}
 
 	log.Printf("Synced - server response: %s", resp.Status)
+	return nil
 }

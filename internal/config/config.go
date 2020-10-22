@@ -2,7 +2,6 @@ package config
 
 import (
 	"io/ioutil"
-	"log"
 	"path/filepath"
 	"time"
 
@@ -25,23 +24,26 @@ func readConfig(cfgPath string) ([]byte, error) {
 	return bytes, nil
 }
 
-func ConnectOSQ() {
+func ConnectOSQ() error {
 	c, err := osquery.NewClient(utils.Cfg.OsqSock, 10*time.Second)
 	if err != nil {
-		log.Fatalf("osquery (error) while creating a new client: %v\n", err)
+		return err
 	}
 	utils.OsQ.Client = c
+	return nil
 }
 
 // Initiate populates the global variable Cfg and OsQ with the information in the yml
-func Initiate(cfgPath string) {
+func Initiate(cfgPath string) error {
 	content, err := readConfig(cfgPath)
 	if err != nil {
-		log.Fatalf("error while reading the config file: %v\n", err)
+		return err
 	}
+
 	if err := yaml.Unmarshal(content, &utils.Cfg); err != nil {
-		log.Fatalf("cannot unmarshall the config file: %v\n", err)
+		return err
 	}
 
 	utils.Cfg.CfgPath = cfgPath
+	return nil
 }

@@ -4,6 +4,9 @@ github.com/Microsoft/go-winio
 github.com/Microsoft/go-winio/pkg/guid
 # github.com/apache/thrift v0.13.1-0.20200603211036-eac4d0c79a5f
 github.com/apache/thrift/lib/go/thrift
+# github.com/getsentry/sentry-go v0.7.0
+## explicit
+github.com/getsentry/sentry-go
 # github.com/kolide/osquery-go v0.0.0-20200604192029-b019be7063ac
 ## explicit
 github.com/kolide/osquery-go

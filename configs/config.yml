@@ -1,4 +1,5 @@
 osquery_sock: /var/osquery/osquery.em
 api_url: http://localhost:3000
-api_token: fnenfewdkoijfweo3432powd
-sync_interval: 10 # minutes
+api_token: kvPg5YduP6gHW7g9fLjCkXHy
+sync_interval: 1 # minutes
+sentry_dsn: "your_sentry_dsn"

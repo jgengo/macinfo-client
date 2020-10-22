@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/getsentry/sentry-go"
 	"github.com/kolide/osquery-go"
 )
 
@@ -22,6 +23,7 @@ type Config struct {
 	APIURL       string        `yaml:"api_url"`
 	APIToken     string        `yaml:"api_token"`
 	SyncInterval time.Duration `yaml:"sync_interval"`
+	SentryDSN    string        `yaml:"sentry_dsn"`
 	CfgPath      string
 }
 
@@ -37,6 +39,7 @@ func ChangeToken(token string) {
 	b, err := ioutil.ReadFile(Cfg.CfgPath)
 	if err != nil {
 		log.Printf("failed to read the config file: %v\n", err)
+		sentry.CaptureException(err)
 		return
 	}
 
