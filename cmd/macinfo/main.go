@@ -67,7 +67,7 @@ func main() {
 	}
 	defer sentry.Flush(2 * time.Second)
 
-	doEvery(utils.Cfg.SyncInterval * time.Second)
+	doEvery(utils.Cfg.SyncInterval * time.Minute)
 
 	for {
 
