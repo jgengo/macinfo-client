@@ -14,26 +14,30 @@ import (
 	"github.com/getsentry/sentry-go"
 )
 
-const appVersion = "0.6"
+const appVersion = "0.8"
 
-func doEvery(d time.Duration) error {
+func doEvery(d time.Duration) {
+	localHub := sentry.CurrentHub().Clone()
 	for range time.Tick(d) {
+
 		if err := config.ConnectOSQ(); err != nil {
 			log.Printf("osquery (error) while creating a new client: %v\n", err)
-			return err
+			localHub.CaptureException(err)
+			continue
 		}
 		system, err := gatherer.GetInfo()
 		if err != nil {
 			log.Printf("gatherer (error) getinfo: %v\n", err)
-			return err
+			localHub.CaptureException(err)
+			continue
 		}
 		if err := sender.Process(system); err != nil {
 			log.Printf("sender (error) process: %v\n", err)
-			return err
+			localHub.CaptureException(err)
+			continue
 		}
 		utils.OsQ.Client.Close()
 	}
-	return nil
 }
 
 func main() {
@@ -54,17 +58,17 @@ func main() {
 	defer utils.OsQ.Client.Close()
 
 	err := sentry.Init(sentry.ClientOptions{
-		Dsn:   utils.Cfg.SentryDSN,
-		Debug: true,
+		Dsn:     utils.Cfg.SentryDSN,
+		Debug:   true,
+		Release: appVersion,
 	})
 	if err != nil {
 		log.Fatalf("sentry (error) failed to init sentry: %v\n", err)
 	}
 	defer sentry.Flush(2 * time.Second)
 
-	if err := doEvery(utils.Cfg.SyncInterval * time.Minute); err != nil {
-		sentry.CaptureException(err)
-	}
+	doEvery(utils.Cfg.SyncInterval * time.Second)
+
 	for {
 
 	}
