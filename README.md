@@ -1,10 +1,11 @@
-# MacInfo Client
+<div align="center">
 
-[![Go Version](https://img.shields.io/badge/go-1.20%2B-blue.svg)](https://golang.org/dl/)
+  <h1>macinfo client</h1>
+
+  [![Go Version](https://img.shields.io/badge/go-1.20%2B-blue.svg)](https://golang.org/dl/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)]()
 
-<div align="center">
   <sub>Created by <a href="https://github.com/jgengo">Jordane Gengo (Titus)</a></sub><br>
   <sub>From <a href="https://hive.fi">Hive Helsinki</a></sub><br>
   <sub>Highly inspired by <a href="#">macreport</a> (clem)</sub>
@@ -14,7 +15,7 @@
 
 ## Overview
 
-**MacInfo Client** is a lightweight Go agent for macOS that periodically collects detailed system information using [osquery](https://osquery.io/) and securely syncs it to a remote API. It is designed for fleet management, asset inventory, and compliance monitoring in organizations, but is also useful for individuals who want deep insight into their Mac.
+**macinfo client** is a lightweight Go agent for macOS that periodically collects detailed system information using [osquery](https://osquery.io/) and securely syncs it to a remote API. It is designed for fleet management, asset inventory, and compliance monitoring in organizations, but is also useful for individuals who want deep insight into their Mac.
 
 ---
 
