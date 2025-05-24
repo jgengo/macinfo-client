@@ -17,7 +17,7 @@
 
 **macinfo client** is a lightweight Go agent for macOS that periodically collects detailed system information using [osquery](https://osquery.io/) and securely syncs it to a remote API. It is designed for fleet management, asset inventory, and compliance monitoring in organizations, but is also useful for individuals who want deep insight into their Mac.
 
----
+<br>
 
 ## Features
 
@@ -30,7 +30,7 @@
 - Runs as a background service (launchd compatible)
 - Simple YAML configuration
 
----
+<br>
 
 ## Requirements
 
@@ -38,7 +38,7 @@
 - [osquery](https://osquery.io/) installed and running (default socket: `/var/osquery/osquery.em`)
 - Go 1.20+ (for development/building)
 
----
+<br>
 
 ## Installation
 
@@ -59,7 +59,7 @@
    # Or to another location of your choice
    ```
 
----
+<br>
 
 ## Configuration
 
@@ -85,7 +85,7 @@ You can specify a custom config path at runtime:
 ./macinfo -cfg /opt/path/you/want/macinfo.yml
 ```
 
----
+<br>
 
 ## Usage
 
@@ -113,7 +113,7 @@ A sample launchd plist is provided for running MacInfo Client as a background se
    sudo launchctl start fi.hive.macinfo
    ```
 
----
+<br>
 
 ## Example Output
 
@@ -136,7 +136,7 @@ The client collects and sends data like:
 }
 ```
 
----
+<br>
 
 ## Development
 
@@ -146,20 +146,20 @@ The client collects and sends data like:
 - Config: `configs/config.yml`
 - Build with `make build` or `go build`
 
----
+<br>
 
 ## Credits & Inspiration
 
 - Created by [Jordane Gengo (Titus)](https://github.com/jgengo) @ [Hive Helsinki](https://hive.fi)
 - Highly inspired by macreport (clem)
 
----
+<br>
 
 ## License
 
 MIT License. See [LICENSE](LICENSE).
 
----
+<br>
 
 ## Links
 
